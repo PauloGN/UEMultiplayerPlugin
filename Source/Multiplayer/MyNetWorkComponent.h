@@ -10,7 +10,6 @@
 #include "MyNetWorkComponent.generated.h"
 
 
-
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class MULTIPLAYER_API UMyNetWorkComponent : public UActorComponent
 {
