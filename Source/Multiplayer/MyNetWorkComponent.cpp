@@ -16,7 +16,7 @@ UMyNetWorkComponent::UMyNetWorkComponent() :
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 
 	// ONLINE SESSION initialization
 	onlineSubsystem = IOnlineSubsystem::Get();
@@ -92,7 +92,7 @@ void UMyNetWorkComponent::CreateGameSession()
 		return;
 	}
 	
-	// To avoid having one session created on top of each other check if the session already exist if so delete before create a new one.
+	// To avoid having one session created on top of each other check if the session already exists if so delete before create a new one.
 	auto ExistingSession =  onlineSessionInterface->GetNamedSession(NAME_GameSession);
 	if (ExistingSession != nullptr)
 	{
@@ -113,7 +113,6 @@ void UMyNetWorkComponent::CreateGameSession()
 	sessionSettings->bUseLobbiesIfAvailable = true;
 	sessionSettings->Set(FName("MatchType"),FString("FreeForAll"), EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
 
-
 	//in Unreal Engine, the function GetPreferredUniqueNetId() is used to retrieve the unique network identifier (NetId) for a local player. It is a member function of the ULocalPlayer class, which represents a player who is locally controlled on the client.
 	const ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController();
 	onlineSessionInterface->CreateSession(*LocalPlayer->GetPreferredUniqueNetId(), NAME_GameSession, *sessionSettings);
@@ -123,7 +122,7 @@ void UMyNetWorkComponent::CreateGameSession()
 //Joing game Sessions
 void UMyNetWorkComponent::JoinGameSession()
 {
-	//Safelly check pointers before access them
+	//Safely check pointers before accessing them.
 	if (sessionSearch == nullptr || !onlineSessionInterface.IsValid())
 	{
 		return;
@@ -157,7 +156,7 @@ void UMyNetWorkComponent::OnCreateSessionComplete(FName SessionName, bool bWasSu
 				FString::Printf(TEXT("Created section: %s"), *SessionName.ToString()));
 		}
 
-		//Once the sesseion was created travel to the lobby onpening it as a listen server.
+		//Once the session was created travel to the lobby onpen it as a listen server.
 		UWorld* World = GetWorld();
 
 		if (World)
@@ -175,23 +174,21 @@ void UMyNetWorkComponent::OnCreateSessionComplete(FName SessionName, bool bWasSu
 							TEXT("Conection failed..."));
 		}
 	}
-
 }
 
 //if a session is found then this function will be called and bWasSuccessful will be true.
 void UMyNetWorkComponent::OnFindSessionComplete(bool bWasSuccessful)
 {
-	//FOnlineSession search contains a variable called searchResults it is an array of all sessions found.
 
 	if (!onlineSessionInterface.IsValid())
 	{
 		return;
 	}
 
+	//FOnlineSession search contains a variable called searchResults it is an array of all sessions found.
 	for (auto Result : sessionSearch->SearchResults )
 	{
 		//Now we can get informations about the session found if there is any
-
 		FString Id = Result.GetSessionIdStr();
 		FString User = Result.Session.OwningUserName;
 		FString FoundMatchType;//Goes into session settings and return with the value correspondent to the type found
@@ -221,7 +218,7 @@ void UMyNetWorkComponent::OnFindSessionComplete(bool bWasSuccessful)
 			//add joinDelegate to the delegate list // now the call back function can be called after join session has been completed
 			onlineSessionInterface->AddOnJoinSessionCompleteDelegate_Handle(joinSessionCompleteDelegate);
 
-			//Getting the local player netid
+			//Getting the local player netId
 			const ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController();
 
 			//Call Join session
@@ -249,7 +246,7 @@ void UMyNetWorkComponent::OnjoinSessionComplete(FName SessionName, EOnJoinSessio
 		}
 	}
 
-	//Now we have the IP to connect to we can join the session
+	//Now we have the IP to connect to, we can join the session
 	APlayerController* playerController = GetOwner()->GetGameInstance()->GetFirstLocalPlayerController();
 	if (playerController)
 	{

@@ -28,6 +28,10 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+#pragma region LAN TESTING
+
+public:
+
 	UFUNCTION(BlueprintCallable)
 	void OpenLobby();
 
@@ -37,12 +41,13 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CallOpenLevelClienteTravel(const FString& address);
 
+#pragma endregion
 
 #pragma region Testing Online Sessions 
 
 public:
 
-	class IOnlineSubsystem* onlineSubsystem;
+	class IOnlineSubsystem* onlineSubsystem;//Forward declararion for the online subsystem
 	IOnlineSessionPtr onlineSessionInterface;
 	TSharedPtr<class FOnlineSessionSettings> sessionSettings; //https://docs.unrealengine.com/4.27/en-US/API/Plugins/OnlineSubsystem/FOnlineSessionSettings/
 	TSharedPtr<class FOnlineSessionSearch> sessionSearch; //https://docs.unrealengine.com/4.27/en-US/API/Plugins/OnlineSubsystem/FOnlineSession/
