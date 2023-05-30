@@ -6,7 +6,12 @@
 #include "OnlineSubsystem.h"//included as a dependency for our multiplayer sessions plugin
 #include "OnlineSessionSettings.h"
 
-UMultiplayerSessionsSubsystem::UMultiplayerSessionsSubsystem()
+UMultiplayerSessionsSubsystem::UMultiplayerSessionsSubsystem():
+	createSessionCompleteDelegate(FOnCreateSessionCompleteDelegate::CreateUObject(this, &ThisClass::OnCreateSessionComplete)),
+	findSessionsCompleteDelegate(FOnFindSessionsCompleteDelegate::CreateUObject(this, &ThisClass::OnFindSessionsComplete)),
+	joinSessionCompleteDelegate(FOnJoinSessionCompleteDelegate::CreateUObject(this, &ThisClass::OnJoinSessionComplete)),
+	destroySessionCompleteDelegate(FOnDestroySessionCompleteDelegate::CreateUObject(this, &ThisClass::OnDestroySessionComplete)),
+	startSessionCompleteDelegate(FOnStartSessionCompleteDelegate::CreateUObject(this, &ThisClass::OnStartSessionComplete))
 {
 	//Iniatialize subsystem and session interface references
 	subsystem = IOnlineSubsystem::Get();
@@ -15,3 +20,47 @@ UMultiplayerSessionsSubsystem::UMultiplayerSessionsSubsystem()
 		sessionInterface = subsystem->GetSessionInterface();
 	}
 }
+
+#pragma region MENU SYSTEM
+
+void UMultiplayerSessionsSubsystem::CreateSession(int32 NumPublicConnections, FString MatchType)
+{
+}
+
+void UMultiplayerSessionsSubsystem::FindSessions(int32 MaxSearchResults)
+{
+}
+
+void UMultiplayerSessionsSubsystem::JoinSession(const FOnlineSessionSearchResult& SessionResult)
+{
+}
+
+void UMultiplayerSessionsSubsystem::DestroySession()
+{
+}
+
+void UMultiplayerSessionsSubsystem::StartSession()
+{
+}
+
+void UMultiplayerSessionsSubsystem::OnCreateSessionComplete(FName SessionName, bool bWasSuccessful)
+{
+}
+
+void UMultiplayerSessionsSubsystem::OnFindSessionsComplete(bool bWasSuccessful)
+{
+}
+
+void UMultiplayerSessionsSubsystem::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result)
+{
+}
+
+void UMultiplayerSessionsSubsystem::OnDestroySessionComplete(FName SessionName, bool bWasSuccessful)
+{
+}
+
+void UMultiplayerSessionsSubsystem::OnStartSessionComplete(FName SessionName, bool bWasSuccessful)
+{
+}
+
+#pragma endregion
