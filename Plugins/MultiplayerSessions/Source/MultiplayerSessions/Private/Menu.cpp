@@ -3,6 +3,7 @@
 #include "Components/Button.h"
 #include "MultiplayerSessionsSubsystem.h"
 
+
 void UMenu::MenuSetup(int32 NumberOfPublicConnections, FString TypeOfMach)
 {
 	//Set member variables
@@ -44,7 +45,12 @@ void UMenu::MenuSetup(int32 NumberOfPublicConnections, FString TypeOfMach)
 	//
 	if (multiplayerSessionsSubsystem)
 	{
+		//Acess multiplayersession class/ Delegate inside the class /					Call back function in response
 		multiplayerSessionsSubsystem->multiplayerOnCreateSessionComplete.AddDynamic(this,&ThisClass::OncreateSession);
+		multiplayerSessionsSubsystem->multiplayerOnFindSessionsComplete.AddUObject(this, &ThisClass::OnFindSessions);
+		multiplayerSessionsSubsystem->multiplayerOnJoinSessionComplete.AddUObject(this, &ThisClass::OnJoinSession);
+		multiplayerSessionsSubsystem->multiplayerOnDestroySessionComplete.AddDynamic(this, &ThisClass::OncreateSession);
+		multiplayerSessionsSubsystem->multiplayerOnStartSessionComplete.AddDynamic(this, &ThisClass::OnStartSession);
 	}
 }
 
@@ -99,6 +105,23 @@ void UMenu::OncreateSession(bool bWasSuccessful)
 	{
 		World->ServerTravel(FString("/Game/ThirdPerson/Maps/Lobby?listen"));
 	}
+}
+
+void UMenu::OnDestroySession(bool bWasSuccessful)
+{
+}
+
+void UMenu::OnStartSession(bool bWasSuccessful)
+{
+
+}
+
+void UMenu::OnFindSessions(const TArray<FOnlineSessionSearchResult>& SessionResults, bool bWasSuccessful)
+{
+}
+
+void UMenu::OnJoinSession(EOnJoinSessionCompleteResult::Type Result)
+{
 }
 
 #pragma endregion

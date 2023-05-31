@@ -13,8 +13,10 @@
 //Declaring our own Custum delegates for the MenuClass to bind call backs to
 //
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMultiplayerOnCreateSessionComplete, bool, bWasSuccessful);
-
-
+DECLARE_MULTICAST_DELEGATE_TwoParams(FMultiplayerOnFindSessionsComplete, const TArray<FOnlineSessionSearchResult>& SessionResults, bool bWasSuccessful);
+DECLARE_MULTICAST_DELEGATE_OneParam(FMultiplayerOnJoinSessionComplete, EOnJoinSessionCompleteResult::Type Result);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMultiplayerOnDestroySessionComplete, bool, bWasSuccessful);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMultiplayerOnStartSessionComplete, bool, bWasSuccessful);
 
 /**
  * 
@@ -40,8 +42,11 @@ public:
 	//
 	//Custom DELEGATES for the Menu Class be able to bind call backs to
 	//
-
 	FMultiplayerOnCreateSessionComplete multiplayerOnCreateSessionComplete;
+	FMultiplayerOnFindSessionsComplete multiplayerOnFindSessionsComplete;
+	FMultiplayerOnJoinSessionComplete multiplayerOnJoinSessionComplete;
+	FMultiplayerOnDestroySessionComplete multiplayerOnDestroySessionComplete;
+	FMultiplayerOnStartSessionComplete multiplayerOnStartSessionComplete;
 
 protected:
 
