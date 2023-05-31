@@ -39,6 +39,13 @@ void UMenu::MenuSetup(int32 NumberOfPublicConnections, FString TypeOfMach)
 		multiplayerSessionsSubsystem =  GameInstance->GetSubsystem<UMultiplayerSessionsSubsystem>();
 	}
 
+	//
+	//Bind Call backs to get the response from the Multiplyer subsystem
+	//
+	if (multiplayerSessionsSubsystem)
+	{
+		multiplayerSessionsSubsystem->multiplayerOnCreateSessionComplete.AddDynamic(this,&ThisClass::OncreateSession);
+	}
 }
 
 bool UMenu::Initialize()
@@ -69,6 +76,33 @@ void UMenu::NativeDestruct()
 	Super::NativeDestruct();
 }
 
+#pragma region CALLBACKS residing on MultiplayerSessionsSubsystem
+
+void UMenu::OncreateSession(bool bWasSuccessful)
+{
+	//On Session Failed
+	if (!bWasSuccessful)
+	{
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Session Failed")));
+		}
+		return;
+	}
+
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Session Created successfully")));
+	}
+	UWorld* World = GetWorld();
+	if (World)
+	{
+		World->ServerTravel(FString("/Game/ThirdPerson/Maps/Lobby?listen"));
+	}
+}
+
+#pragma endregion
+
 void UMenu::HostButtonClicked()
 {
 	if (GEngine)
@@ -79,13 +113,6 @@ void UMenu::HostButtonClicked()
 	if (multiplayerSessionsSubsystem)
 	{
 		multiplayerSessionsSubsystem->CreateSession(numPublicConnections, matchType);
-
-		UWorld* World = GetWorld();
-
-		if (World)
-		{
-			World->ServerTravel(FString("/Game/ThirdPerson/Maps/Lobby?listen"));
-		}
 	}
 }
 

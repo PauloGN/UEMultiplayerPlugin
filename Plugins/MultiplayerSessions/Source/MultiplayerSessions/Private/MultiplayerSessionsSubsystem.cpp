@@ -65,6 +65,8 @@ void UMultiplayerSessionsSubsystem::CreateSession(int32 NumPublicConnections, FS
 	if (!bSessionSucceed)
 	{
 		sessionInterface->ClearOnCreateSessionCompleteDelegate_Handle(createSessionCompleteDelegateHandle);
+		//BroadCast our own custom delegate in response to the menu call
+		multiplayerOnCreateSessionComplete.Broadcast(false);
 	}
 
 
@@ -90,8 +92,21 @@ void UMultiplayerSessionsSubsystem::StartSession()
 {
 }
 
+#pragma endregion
+
+#pragma region CALLBACKS_IN_RESPONSE_TO_EOS
+
+
 void UMultiplayerSessionsSubsystem::OnCreateSessionComplete(FName SessionName, bool bWasSuccessful)
 {
+	//Once we are done with the delegate from the EOS we can remove it from delegate list
+	if (sessionInterface)
+	{
+		sessionInterface->ClearOnCreateSessionCompleteDelegate_Handle(createSessionCompleteDelegateHandle);
+	}
+	//BradCast the signal in response to the menu system
+	multiplayerOnCreateSessionComplete.Broadcast(bWasSuccessful);
+
 }
 
 void UMultiplayerSessionsSubsystem::OnFindSessionsComplete(bool bWasSuccessful)

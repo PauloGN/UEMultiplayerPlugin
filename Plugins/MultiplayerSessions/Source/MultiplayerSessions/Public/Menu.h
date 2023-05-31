@@ -26,6 +26,14 @@ protected:
 	//The NativeDestruct() function is called when the object is being destroyed or deallocated.
 	virtual void NativeDestruct() override;
 
+	//
+	//Callbacks for the custom delegates residing on MultiplayerSessionsSubsystem
+	//
+	UFUNCTION()
+	void OncreateSession(bool bWasSuccessful);
+	
+
+
 private:
 	//
 	//Variables to acess the buttons in our widget UI
