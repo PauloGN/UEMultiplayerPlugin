@@ -3,18 +3,21 @@
 #include "Components/Button.h"
 #include "MultiplayerSessionsSubsystem.h"
 
-void UMenu::MenuSetup()
+void UMenu::MenuSetup(int32 NumberOfPublicConnections, FString TypeOfMach)
 {
+	//Set member variables
+	numPublicConnections = NumberOfPublicConnections;
+	matchType = TypeOfMach;
+
+	//Set Viewport
 	AddToViewport();
 	SetVisibility(ESlateVisibility::Visible);
 	bIsFocusable = true;
 
 	UWorld* World = GetWorld();
-
 	if (World)
 	{
 		APlayerController* PlayerControler = World->GetFirstPlayerController();
-
 		if (PlayerControler)
 		{
 			FInputModeUIOnly InputModeData;
@@ -59,6 +62,13 @@ bool UMenu::Initialize()
 	return true;
 }
 
+//It is an override of the base class's destruct function, allowing you to implement your own cleanup logic
+void UMenu::NativeDestruct()
+{
+	MenuTearDown();
+	Super::NativeDestruct();
+}
+
 void UMenu::HostButtonClicked()
 {
 	if (GEngine)
@@ -68,7 +78,14 @@ void UMenu::HostButtonClicked()
 
 	if (multiplayerSessionsSubsystem)
 	{
-		multiplayerSessionsSubsystem->CreateSession(25, FString("FreeForAll"));
+		multiplayerSessionsSubsystem->CreateSession(numPublicConnections, matchType);
+
+		UWorld* World = GetWorld();
+
+		if (World)
+		{
+			World->ServerTravel(FString("/Game/ThirdPerson/Maps/Lobby?listen"));
+		}
 	}
 }
 
@@ -82,5 +99,24 @@ void UMenu::JoinButtonClicked()
 	if (multiplayerSessionsSubsystem)
 	{
 		//multiplayerSessionsSubsystem->JoinSession(FOnlineSessionSearchResult());
+	}
+}
+
+void UMenu::MenuTearDown()
+{
+	//Remove the widget
+	RemoveFromParent();
+
+	//Access player controller to restore input to it
+	UWorld* World = GetWorld();
+	if (World)
+	{
+		APlayerController* PlayerControler = World->GetFirstPlayerController();
+		if (PlayerControler)
+		{
+			FInputModeGameOnly InputModeData;
+			PlayerControler->SetInputMode(InputModeData);
+			PlayerControler->SetShowMouseCursor(false);
+		}
 	}
 }

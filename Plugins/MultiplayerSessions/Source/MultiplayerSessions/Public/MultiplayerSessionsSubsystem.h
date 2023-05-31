@@ -46,6 +46,8 @@ private:
 
 	class IOnlineSubsystem* subsystem;
 	IOnlineSessionPtr sessionInterface;
+	// settings used in the last session
+	TSharedPtr<FOnlineSessionSettings> lastSessionSettings;
 
 	//
 	// Delegates to add to the Online Session Interface delegate list.
