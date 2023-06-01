@@ -4,13 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "OnlineSessionSettings.h"
-#include "Interfaces/OnlineSessionInterface.h"
 #include "Menu.generated.h"
 
 /**
  * 
  */
+
+ // Forward declarations for the types used in the function arguments
+class FOnlineSessionSearchResult;
+namespace EOnJoinSessionCompleteResult{enum Type;}
+
 UCLASS()
 class MULTIPLAYERSESSIONS_API UMenu : public UUserWidget
 {
