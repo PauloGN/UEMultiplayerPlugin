@@ -56,6 +56,7 @@ void UMultiplayerSessionsSubsystem::CreateSession(int32 NumPublicConnections, FS
 	lastSessionSettings->bUsesPresence = true;
 	lastSessionSettings->bUseLobbiesIfAvailable = true;
 	lastSessionSettings->Set(FName("MatchType"), MatchType, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
+	lastSessionSettings->BuildUniqueId = 1;
 
 	//in Unreal Engine, the function GetPreferredUniqueNetId() is used to retrieve the unique network identifier (NetId) for a local player. It is a member function of the ULocalPlayer class, which represents a player who is locally controlled on the client.
 	const ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController();
