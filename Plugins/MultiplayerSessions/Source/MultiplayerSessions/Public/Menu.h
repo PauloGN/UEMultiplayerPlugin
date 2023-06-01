@@ -24,6 +24,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void MenuSetup(int32 NumberOfPublicConnections = 8, FString TypeOfMach = FString(TEXT("FreeForAll")));
 
+	UFUNCTION(BlueprintCallable)
+	void SetLobbyPath(FString LobbyPath);
+
 protected:
 
 	//Existing virtual function called on system initialize
@@ -75,6 +78,7 @@ private:
 	
 	//variables of controll
 	int32 numPublicConnections{8};
-	FString matchType{TEXT("FreeForAll")};
+	FString matchType{ TEXT("FreeForAll") };
+	FString pathToLobby{TEXT("null")};
 	
 };

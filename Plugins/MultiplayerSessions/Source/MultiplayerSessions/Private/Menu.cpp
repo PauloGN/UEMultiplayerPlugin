@@ -56,6 +56,11 @@ void UMenu::MenuSetup(int32 NumberOfPublicConnections, FString TypeOfMach)
 	}
 }
 
+void UMenu::SetLobbyPath(FString LobbyPath)
+{
+	pathToLobby = FString::Printf(TEXT("%s?listen"), *LobbyPath);
+}
+
 bool UMenu::Initialize()
 {
 	// If the base class does not initialize retur false
@@ -105,7 +110,11 @@ void UMenu::OncreateSession(bool bWasSuccessful)
 	UWorld* World = GetWorld();
 	if (World)
 	{
-		World->ServerTravel(FString("/Game/ThirdPerson/Maps/Lobby?listen"));
+		if (pathToLobby == TEXT("null"))
+		{
+			pathToLobby = FString("/Game/ThirdPerson/Maps/Lobby?listen");
+		}
+		World->ServerTravel(pathToLobby);
 	}
 }
 
