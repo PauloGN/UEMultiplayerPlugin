@@ -96,6 +96,8 @@ void UMenu::OncreateSession(bool bWasSuccessful)
 	//On Session Failed
 	if (!bWasSuccessful)
 	{
+		hostButton->SetIsEnabled(true);
+
 		if (GEngine)
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Session Failed")));
@@ -146,6 +148,12 @@ void UMenu::OnFindSessions(const TArray<FOnlineSessionSearchResult>& SessionResu
 			return;
 		}
 	}
+
+	if (bWasSuccessful || SessionResults.Num() <= 0)
+	{
+		joinButton->SetIsEnabled(true);
+	}
+
 }
 
 void UMenu::OnJoinSession(EOnJoinSessionCompleteResult::Type Result)
@@ -167,12 +175,18 @@ void UMenu::OnJoinSession(EOnJoinSessionCompleteResult::Type Result)
 			}
 		}
 	}
+
+	if (Result != EOnJoinSessionCompleteResult::Success)
+	{
+		joinButton->SetIsEnabled(true);
+	}
 }
 
 #pragma endregion
 
 void UMenu::HostButtonClicked()
 {
+	hostButton->SetIsEnabled(false);
 	if (multiplayerSessionsSubsystem)
 	{
 		multiplayerSessionsSubsystem->CreateSession(numPublicConnections, matchType);
@@ -181,6 +195,7 @@ void UMenu::HostButtonClicked()
 
 void UMenu::JoinButtonClicked()
 {
+	joinButton->SetIsEnabled(false);
 	if (multiplayerSessionsSubsystem)
 	{
 		//Because we are using the Steam DevID '480', there is a high chance of finding many sessions. Therefore, we are searching for a large number of possible sessions.

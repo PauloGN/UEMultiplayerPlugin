@@ -86,4 +86,10 @@ private:
 	FDelegateHandle joinSessionCompleteDelegateHandle;
 	FDelegateHandle destroySessionCompleteDelegateHandle;
 	FDelegateHandle startSessionCompleteDelegateHandle;
+	//
+	//Check Destroy session
+	//
+	bool bCreateSessionOnDestroy{ false };
+	int32 lastNumPublicConnections;
+	FString lastMatchType;
 };
