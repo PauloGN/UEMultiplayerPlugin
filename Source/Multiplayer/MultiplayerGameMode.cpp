@@ -4,6 +4,8 @@
 #include "MultiplayerCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 
+#include "Multiplayer/UI/FirstHUD.h"
+
 AMultiplayerGameMode::AMultiplayerGameMode()
 {
 	// set default pawn class to our Blueprinted character
@@ -12,4 +14,5 @@ AMultiplayerGameMode::AMultiplayerGameMode()
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
+	HUDClass = AFirstHUD::StaticClass();
 }
