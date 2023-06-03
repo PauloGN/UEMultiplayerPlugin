@@ -66,6 +66,7 @@ private:
 	IOnlineSessionPtr sessionInterface;
 	// settings used in the last session
 	TSharedPtr<FOnlineSessionSettings> lastSessionSettings;
+	TSharedPtr<FOnlineSessionSearch> lastSessionSearch;
 
 	//
 	// Delegates to add to the Online Session Interface delegate list.
@@ -85,4 +86,10 @@ private:
 	FDelegateHandle joinSessionCompleteDelegateHandle;
 	FDelegateHandle destroySessionCompleteDelegateHandle;
 	FDelegateHandle startSessionCompleteDelegateHandle;
+	//
+	//Check Destroy session
+	//
+	bool bCreateSessionOnDestroy{ false };
+	int32 lastNumPublicConnections;
+	FString lastMatchType;
 };

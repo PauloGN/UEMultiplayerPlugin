@@ -4,13 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "OnlineSessionSettings.h"
-#include "Interfaces/OnlineSessionInterface.h"
 #include "Menu.generated.h"
 
 /**
  * 
  */
+
+ // Forward declarations for the types used in the function arguments
+class FOnlineSessionSearchResult;
+namespace EOnJoinSessionCompleteResult{enum Type;}
+
 UCLASS()
 class MULTIPLAYERSESSIONS_API UMenu : public UUserWidget
 {
@@ -20,6 +23,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void MenuSetup(int32 NumberOfPublicConnections = 8, FString TypeOfMach = FString(TEXT("FreeForAll")));
+
+	UFUNCTION(BlueprintCallable)
+	void SetLobbyPath(FString LobbyPath);
 
 protected:
 
@@ -72,6 +78,7 @@ private:
 	
 	//variables of controll
 	int32 numPublicConnections{8};
-	FString matchType{TEXT("FreeForAll")};
+	FString matchType{ TEXT("FreeForAll") };
+	FString pathToLobby{TEXT("null")};
 	
 };
