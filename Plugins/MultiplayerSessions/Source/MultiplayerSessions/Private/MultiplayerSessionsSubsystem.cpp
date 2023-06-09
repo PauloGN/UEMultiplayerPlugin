@@ -40,11 +40,7 @@ void UMultiplayerSessionsSubsystem::CreateSession(int32 NumPublicConnections, FS
 	auto ExistingSession = sessionInterface->GetNamedSession(NAME_GameSession);
 	if (ExistingSession != nullptr)
 	{
-		bCreateSessionOnDestroy = true;
-		lastNumPublicConnections = NumPublicConnections;
-		lastMatchType = MatchType;
-
-		DestroySession();
+		sessionInterface->DestroySession(NAME_GameSession);
 	}
 	
 	//Store the Delegate in a FDelegateHandle so we can later remove it from the delegate list
@@ -60,7 +56,6 @@ void UMultiplayerSessionsSubsystem::CreateSession(int32 NumPublicConnections, FS
 	lastSessionSettings->bUsesPresence = true;
 	lastSessionSettings->bUseLobbiesIfAvailable = true;
 	lastSessionSettings->Set(FName("MatchType"), MatchType, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
-	lastSessionSettings->BuildUniqueId = 1;
 
 	//in Unreal Engine, the function GetPreferredUniqueNetId() is used to retrieve the unique network identifier (NetId) for a local player. It is a member function of the ULocalPlayer class, which represents a player who is locally controlled on the client.
 	const ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController();
@@ -83,64 +78,14 @@ void UMultiplayerSessionsSubsystem::CreateSession(int32 NumPublicConnections, FS
 
 void UMultiplayerSessionsSubsystem::FindSessions(int32 MaxSearchResults)
 {
-	if (!sessionInterface)
-	{
-		return;
-	}
-
-	findSessionsCompleteDelegateHandle = sessionInterface->AddOnFindSessionsCompleteDelegate_Handle(findSessionsCompleteDelegate);
-
-	lastSessionSearch = MakeShareable(new FOnlineSessionSearch());
-	lastSessionSearch->MaxSearchResults = MaxSearchResults;
-	lastSessionSearch->bIsLanQuery = IOnlineSubsystem::Get()->GetSubsystemName() == "NULL" ? true : false;
-	lastSessionSearch->QuerySettings.Set(SEARCH_PRESENCE, true, EOnlineComparisonOp::Equals);
-
-	const ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController();
-	bool bFoundSession = sessionInterface->FindSessions(*LocalPlayer->GetPreferredUniqueNetId(), lastSessionSearch.ToSharedRef());
-
-	//Covering failure and reponding to the menu via broad casting
-	if (!bFoundSession)
-	{
-		sessionInterface->ClearOnFindSessionsCompleteDelegate_Handle(findSessionsCompleteDelegateHandle);
-		multiplayerOnFindSessionsComplete.Broadcast(TArray<FOnlineSessionSearchResult>(), false);
-	}
 }
 
 void UMultiplayerSessionsSubsystem::JoinSession(const FOnlineSessionSearchResult& SessionResult)
 {
-	if (!sessionInterface)
-	{
-		multiplayerOnJoinSessionComplete.Broadcast(EOnJoinSessionCompleteResult::UnknownError);
-		return;
-	}
-
-	joinSessionCompleteDelegateHandle = sessionInterface->AddOnJoinSessionCompleteDelegate_Handle(joinSessionCompleteDelegate);
-
-	const ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController();
-	bool bJoinSuccessfuly = sessionInterface->JoinSession(*LocalPlayer->GetPreferredUniqueNetId(), NAME_GameSession, SessionResult);
-
-	if (!bJoinSuccessfuly)
-	{
-		sessionInterface->ClearOnJoinSessionCompleteDelegate_Handle(joinSessionCompleteDelegateHandle);
-		multiplayerOnJoinSessionComplete.Broadcast(EOnJoinSessionCompleteResult::UnknownError);
-	}
 }
 
 void UMultiplayerSessionsSubsystem::DestroySession()
 {
-	if (!sessionInterface.IsValid())
-	{
-		multiplayerOnDestroySessionComplete.Broadcast(false);
-		return;
-	}
-
-	destroySessionCompleteDelegateHandle = sessionInterface->AddOnDestroySessionCompleteDelegate_Handle(destroySessionCompleteDelegate);
-
-	if (!sessionInterface->DestroySession(NAME_GameSession))
-	{
-		sessionInterface->ClearOnDestroySessionCompleteDelegate_Handle(destroySessionCompleteDelegateHandle);
-		multiplayerOnDestroySessionComplete.Broadcast(false);
-	}
 }
 
 void UMultiplayerSessionsSubsystem::StartSession()
@@ -166,46 +111,18 @@ void UMultiplayerSessionsSubsystem::OnCreateSessionComplete(FName SessionName, b
 
 void UMultiplayerSessionsSubsystem::OnFindSessionsComplete(bool bWasSuccessful)
 {
-	if (sessionInterface)
-	{
-		sessionInterface->ClearOnFindSessionsCompleteDelegate_Handle(findSessionsCompleteDelegateHandle);
-	}
-
-	if (lastSessionSearch->SearchResults.Num() <= 0)
-	{
-		multiplayerOnFindSessionsComplete.Broadcast(TArray<FOnlineSessionSearchResult>(), false);
-	}
-
-	multiplayerOnFindSessionsComplete.Broadcast(lastSessionSearch->SearchResults, bWasSuccessful);
 }
 
 void UMultiplayerSessionsSubsystem::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result)
 {
-	if (sessionInterface)
-	{
-		sessionInterface->ClearOnJoinSessionCompleteDelegate_Handle(joinSessionCompleteDelegateHandle);
-	}
-
-	multiplayerOnJoinSessionComplete.Broadcast(Result);
 }
 
 void UMultiplayerSessionsSubsystem::OnDestroySessionComplete(FName SessionName, bool bWasSuccessful)
 {
-	if (sessionInterface)
-	{
-		sessionInterface->ClearOnDestroySessionCompleteDelegate_Handle(destroySessionCompleteDelegateHandle);
-	}
-
-	if (bWasSuccessful && bCreateSessionOnDestroy)
-	{
-		bCreateSessionOnDestroy = false;
-		CreateSession(lastNumPublicConnections, lastMatchType);
-	}
-	multiplayerOnDestroySessionComplete.Broadcast(bWasSuccessful);
 }
 
 void UMultiplayerSessionsSubsystem::OnStartSessionComplete(FName SessionName, bool bWasSuccessful)
 {
-
 }
+
 #pragma endregion

@@ -12,7 +12,7 @@ void SFirstMenuWidget::Construct(const FArguments& InArgs)
 	const FMargin ButtonPadding = FMargin(10.0f);
 
 	const FText TitleText = LOCTEXT("Multiplayer", "Multiplayer Window");
-	const FText OpenLobbyText = LOCTEXT("OpenLobby", "OpenLobby");
+	const FText OpenLobbyText = LOCTEXT("CreateLobby", "CreateLobby");
 	const FText JoinLobbyText = LOCTEXT("JoinLobby", "JoinLobby");
 
 	FSlateFontInfo ButtonTextStyle = FCoreStyle::Get().GetFontStyle("EmbossedText");
@@ -45,7 +45,7 @@ void SFirstMenuWidget::Construct(const FArguments& InArgs)
 					.Text(TitleText)
 					.Justification(ETextJustify::Center)
 				]
-				//Button OpenLobby
+				//Button Create Lobby
 				+ SVerticalBox::Slot()
 				.Padding(ButtonPadding)
 				[

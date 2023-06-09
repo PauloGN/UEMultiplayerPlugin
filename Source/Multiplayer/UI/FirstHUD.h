@@ -9,6 +9,7 @@
 /**
  * 
  */
+class SFirstMenuWidget;
 UCLASS()
 class MULTIPLAYER_API AFirstHUD : public AHUD
 {

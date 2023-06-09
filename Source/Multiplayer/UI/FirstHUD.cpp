@@ -11,7 +11,6 @@ void AFirstHUD::BeginPlay()
 	Super::BeginPlay();
 	if (GEngine && GEngine->GameViewport)
 	{
-		//Why is this OwningHUD in SFirstMenuWidget but I can only use OwningHud here??? OwningHud doesnt even exist
 		MenuWidget = SNew(SFirstMenuWidget).OwningHUD(this);
 		GEngine->GameViewport->AddViewportWidgetContent(SAssignNew(MenuWidgetContainer, SWeakWidget).PossiblyNullContent(MenuWidget.ToSharedRef()));
 	}

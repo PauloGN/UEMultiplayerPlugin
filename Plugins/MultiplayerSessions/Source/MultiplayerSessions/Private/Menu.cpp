@@ -2,9 +2,7 @@
 #include "Menu.h"
 #include "Components/Button.h"
 #include "MultiplayerSessionsSubsystem.h"
-#include "OnlineSessionSettings.h"
-#include "Interfaces/OnlineSessionInterface.h"
-#include "OnlineSubsystem.h"
+
 
 void UMenu::MenuSetup(int32 NumberOfPublicConnections, FString TypeOfMach)
 {
@@ -56,11 +54,6 @@ void UMenu::MenuSetup(int32 NumberOfPublicConnections, FString TypeOfMach)
 	}
 }
 
-void UMenu::SetLobbyPath(FString LobbyPath)
-{
-	pathToLobby = FString::Printf(TEXT("%s?listen"), *LobbyPath);
-}
-
 bool UMenu::Initialize()
 {
 	// If the base class does not initialize retur false
@@ -96,8 +89,6 @@ void UMenu::OncreateSession(bool bWasSuccessful)
 	//On Session Failed
 	if (!bWasSuccessful)
 	{
-		hostButton->SetIsEnabled(true);
-
 		if (GEngine)
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Session Failed")));
@@ -112,11 +103,7 @@ void UMenu::OncreateSession(bool bWasSuccessful)
 	UWorld* World = GetWorld();
 	if (World)
 	{
-		if (pathToLobby == TEXT("null"))
-		{
-			pathToLobby = FString("/Game/ThirdPerson/Maps/Lobby?listen");
-		}
-		World->ServerTravel(pathToLobby);
+		World->ServerTravel(FString("/Game/ThirdPerson/Maps/Lobby?listen"));
 	}
 }
 
@@ -131,62 +118,21 @@ void UMenu::OnStartSession(bool bWasSuccessful)
 
 void UMenu::OnFindSessions(const TArray<FOnlineSessionSearchResult>& SessionResults, bool bWasSuccessful)
 {
-
-	if (multiplayerSessionsSubsystem == nullptr)
-	{
-		return;
-	}
-
-	for (auto Result : SessionResults)
-	{
-		FString SettingsValue;
-		Result.Session.SessionSettings.Get(FName("MatchType"), SettingsValue);
-
-		if (SettingsValue == matchType)
-		{
-			multiplayerSessionsSubsystem->JoinSession(Result);
-			return;
-		}
-	}
-
-	if (bWasSuccessful || SessionResults.Num() <= 0)
-	{
-		joinButton->SetIsEnabled(true);
-	}
-
 }
 
 void UMenu::OnJoinSession(EOnJoinSessionCompleteResult::Type Result)
 {
-	IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
-	if (Subsystem)
-	{
-		IOnlineSessionPtr SessionInterface = Subsystem->GetSessionInterface();
-
-		if (SessionInterface.IsValid())
-		{
-			FString Address;
-			SessionInterface->GetResolvedConnectString(NAME_GameSession, Address);
-
-			APlayerController* PlayerController = GetGameInstance()->GetFirstLocalPlayerController();
-			if (PlayerController)
-			{
-				PlayerController->ClientTravel(Address, ETravelType::TRAVEL_Absolute);
-			}
-		}
-	}
-
-	if (Result != EOnJoinSessionCompleteResult::Success)
-	{
-		joinButton->SetIsEnabled(true);
-	}
 }
 
 #pragma endregion
 
 void UMenu::HostButtonClicked()
 {
-	hostButton->SetIsEnabled(false);
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Host Session Button")));
+	}
+
 	if (multiplayerSessionsSubsystem)
 	{
 		multiplayerSessionsSubsystem->CreateSession(numPublicConnections, matchType);
@@ -195,11 +141,14 @@ void UMenu::HostButtonClicked()
 
 void UMenu::JoinButtonClicked()
 {
-	joinButton->SetIsEnabled(false);
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Joing Session Button")));
+	}
+
 	if (multiplayerSessionsSubsystem)
 	{
-		//Because we are using the Steam DevID '480', there is a high chance of finding many sessions. Therefore, we are searching for a large number of possible sessions.
-		multiplayerSessionsSubsystem->FindSessions(10000);
+		//multiplayerSessionsSubsystem->JoinSession(FOnlineSessionSearchResult());
 	}
 }
 
