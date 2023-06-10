@@ -15,7 +15,8 @@ void UMenu::MenuSetup(int32 NumberOfPublicConnections, FString TypeOfMach)
 	//Set Viewport
 	AddToViewport();
 	SetVisibility(ESlateVisibility::Visible);
-	bIsFocusable = true;
+	//bIsFocusable = true;
+	SetIsFocusable(true);
 
 	UWorld* World = GetWorld();
 	if (World)
@@ -89,7 +90,7 @@ void UMenu::NativeDestruct()
 	Super::NativeDestruct();
 }
 
-#pragma region CALLBACKS residing on MultiplayerSessionsSubsystem
+#pragma region CALLBACKS for custom delegates residing on MultiplayerSessionsSubsystem
 
 void UMenu::OncreateSession(bool bWasSuccessful)
 {
@@ -149,11 +150,10 @@ void UMenu::OnFindSessions(const TArray<FOnlineSessionSearchResult>& SessionResu
 		}
 	}
 
-	if (bWasSuccessful || SessionResults.Num() <= 0)
+	if (!bWasSuccessful || SessionResults.Num() <= 0)
 	{
 		joinButton->SetIsEnabled(true);
 	}
-
 }
 
 void UMenu::OnJoinSession(EOnJoinSessionCompleteResult::Type Result)
