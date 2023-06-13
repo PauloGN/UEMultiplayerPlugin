@@ -1,10 +1,15 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "Menu.h"
 #include "Components/Button.h"
+#include "Components/ListView.h"
+#include "Components/TextBlock.h"
+#include "Components/HorizontalBox.h"
 #include "MultiplayerSessionsSubsystem.h"
 #include "OnlineSessionSettings.h"
 #include "Interfaces/OnlineSessionInterface.h"
 #include "OnlineSubsystem.h"
+#include "Blueprint/UserWidget.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
 
 void UMenu::MenuSetup(int32 NumberOfPublicConnections, FString TypeOfMach)
 {
@@ -62,6 +67,7 @@ void UMenu::SetLobbyPath(FString LobbyPath)
 	pathToLobby = FString::Printf(TEXT("%s?listen"), *LobbyPath);
 }
 
+
 bool UMenu::Initialize()
 {
 	// If the base class does not initialize retur false
@@ -80,6 +86,40 @@ bool UMenu::Initialize()
 		joinButton->OnClicked.AddDynamic(this, &ThisClass::JoinButtonClicked);
 	}
 
+	auto ServerEntryClass = serverList->GetEntryWidgetClass();
+	UUserWidget* NewServerEntry;
+	for (int i = 0; i < 25; i++)
+	{
+		NewServerEntry = CreateWidget<UUserWidget>(this, ServerEntryClass);
+		serverList->AddItem(NewServerEntry);
+	}
+	//This code is meant to be a test for modifying the string inside of Entries in the list. GetWidgetFromName is not succesfully getting the horizontal box currently. 
+	//The current possible errors are the string doesnt match which doesn't seem to be the case and the other is that the HorizontalBox is not a direct child of the NewServerEntry but it appears to me in the blueprint that this is a direct child so IDK.
+	//if (NewServerEntry)
+	//{
+	//	UHorizontalBox* HorizontalBox = Cast<UHorizontalBox>(NewServerEntry->GetWidgetFromName("Horizontal Box"));
+	//	if (HorizontalBox)
+	//	{
+	//		UTextBlock* TextBlock = Cast<UTextBlock>(HorizontalBox->GetChildAt(1));
+	//		if (TextBlock)
+	//		{
+	//			FString TestServerName = "Test Server Name";
+	//			TextBlock->SetText(FText::FromString(TestServerName));
+	//		}
+	//		else
+	//		{
+	//			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("TextBlock widget not found in ServerEntryClass"));
+	//		}
+	//	}
+	//	else
+	//	{
+	//		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Failed to find Horizontal Box"));
+	//	}
+	//}
+	//else
+	//{
+	//	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Failed to create NewServerEntry"));
+	//}
 	return true;
 }
 
@@ -190,6 +230,7 @@ void UMenu::HostButtonClicked()
 	if (multiplayerSessionsSubsystem)
 	{
 		multiplayerSessionsSubsystem->CreateSession(numPublicConnections, matchType);
+
 	}
 }
 

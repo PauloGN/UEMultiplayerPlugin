@@ -27,6 +27,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetLobbyPath(FString LobbyPath);
 
+
 protected:
 
 	//Existing virtual function called on system initialize
@@ -57,6 +58,11 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	UButton* joinButton;
+
+	//Access the server ;ost
+
+	UPROPERTY(meta = (BindWidget))
+	class UListView* serverList;
 
 	//
 	//Functions to bind the Buttons functionalities
